@@ -14,3 +14,5 @@ export const get = (req, res) => {
     res.send(user);
   }
 };
+
+// npm install crypto
