@@ -5,7 +5,7 @@ const users = {
 };
 
 export const get = (req, res) => {
-  const username = req.params.username;
+  const username = req.params.username.toLowerCase(); // ensure case-insensitivity
   const user = users[username];
 
   if (!user) {
@@ -14,5 +14,3 @@ export const get = (req, res) => {
     res.send(user);
   }
 };
-
-// npm install crypto
