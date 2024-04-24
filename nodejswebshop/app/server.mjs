@@ -4,13 +4,26 @@ import https from "https";
 import http from "http";
 import fs from "fs";
 
+// Import the router (assuming you have user routes set up as mentioned earlier)
+import userRouter from "./src/routes/User.mjs"; // Adjust the path as necessary
+
 // Specify the paths to your private key and certificate files
-const privateKeyPath = "path/to/private.key";
-const certificatePath = "path/to/certificate.crt";
+const privateKeyPath = "Key&Certificate/private.key";
+const certificatePath = "Key&Certificate/certificate.crt";
+
+// Function to read files safely
+function readFileSyncSafe(path) {
+  try {
+    return fs.readFileSync(path);
+  } catch (error) {
+    console.error(`Failed to load file at ${path}:`, error.message);
+    process.exit(1); // Exit if we cannot read the files, no point in continuing
+  }
+}
 
 // Read the private key and certificate files
-const privateKey = fs.readFileSync(privateKeyPath);
-const certificate = fs.readFileSync(certificatePath);
+const privateKey = readFileSyncSafe(privateKeyPath);
+const certificate = readFileSyncSafe(certificatePath);
 
 // Create options object with the key and cert properties
 const options = {
@@ -21,12 +34,26 @@ const options = {
 // Create an Express app
 const app = express();
 
+// Middleware to parse JSON bodies
+app.use(express.json());
+
+// Serve static files from the 'public' directory
+app.use(express.static("public"));
+
+// Using the user router
+app.use("/users", userRouter);
+
 // Create an HTTP server and bind it to port 80
 http.createServer(app).listen(80, () => {
   console.log("HTTP server running on port 80");
 });
 
 // Create an HTTPS server using the options object and bind it to port 443
-https.createServer(options, app).listen(443, () => {
-  console.log("HTTPS server running on port 443");
-});
+https
+  .createServer(options, app)
+  .listen(443, () => {
+    console.log("HTTPS server running on port 443");
+  })
+  .on("error", (error) => {
+    console.error("HTTPS server failed to start:", error);
+  });
