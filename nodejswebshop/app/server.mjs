@@ -3,13 +3,23 @@ import express from "express";
 import https from "https";
 import http from "http";
 import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-// Import the router (assuming you have user routes set up as mentioned earlier)
-import userRouter from "./src/routes/User.mjs"; // Adjust the path as necessary
+// Define __dirname in ES Module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Import the router
+import userRouter from "./routes/User.mjs";
 
 // Specify the paths to your private key and certificate files
-const privateKeyPath = "Key&Certificate/private.key";
-const certificatePath = "Key&Certificate/certificate.crt";
+const privateKeyPath = path.join(__dirname, "Key&Certificate", "private.key");
+const certificatePath = path.join(
+  __dirname,
+  "Key&Certificate",
+  "certificate.crt"
+);
 
 // Function to read files safely
 function readFileSyncSafe(path) {
@@ -39,6 +49,11 @@ app.use(express.json());
 
 // Serve static files from the 'public' directory
 app.use(express.static("public"));
+
+// Explicit route for '/login'
+app.get("/login", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "login.html"));
+});
 
 // Using the user router
 app.use("/users", userRouter);

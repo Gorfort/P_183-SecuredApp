@@ -17,8 +17,8 @@ export function handleLoginSubmit(event) {
     .then((data) => {
       if (data.success) {
         alert("Login Successful!");
-        // Redirect or perform other actions on success
-        window.location.href = "/dashboard"; // Example redirect
+        // Redirect to the user-specific URL
+        window.location.href = `/users/${username}`; // Dynamic redirection based on username
       } else {
         alert("Login Failed: " + data.message);
       }
