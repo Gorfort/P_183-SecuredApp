@@ -1,4 +1,4 @@
-// Function to handle form submission
+// login.mjs
 export function handleLoginSubmit(event) {
   event.preventDefault();
 
@@ -17,6 +17,8 @@ export function handleLoginSubmit(event) {
     .then((data) => {
       if (data.success) {
         alert("Login Successful!");
+        // Store the token in local storage for future authenticated requests
+        localStorage.setItem("token", data.token);
         // Redirect to the user-specific URL
         window.location.href = `/users/${username}`; // Dynamic redirection based on username
       } else {
@@ -25,6 +27,7 @@ export function handleLoginSubmit(event) {
     })
     .catch((error) => {
       console.error("Error:", error);
+      alert("An error occurred during login.");
     });
 }
 
