@@ -1,10 +1,19 @@
 import bcrypt from "bcrypt";
 
-// Updated database of users with hashed passwords including an admin user
 const users = {
-  sarah: { name: "Sarah", password: bcrypt.hashSync("sarahspassword", 10) },
-  john: { name: "John", password: bcrypt.hashSync("johnspassword", 10) },
-  david: { name: "David", password: bcrypt.hashSync("davidspassword", 10) },
+  alice: { name: "Alice", password: bcrypt.hashSync("alicespassword", 10) },
+  bob: { name: "Bob", password: bcrypt.hashSync("bobspassword", 10) },
+  charlie: {
+    name: "Charlie",
+    password: bcrypt.hashSync("charliespassword", 10),
+  },
+  diana: { name: "Diana", password: bcrypt.hashSync("dianaspassword", 10) },
+  emily: { name: "Emily", password: bcrypt.hashSync("emilyspassword", 10) },
+  frank: { name: "Frank", password: bcrypt.hashSync("frankspassword", 10) },
+  grace: { name: "Grace", password: bcrypt.hashSync("gracespassword", 10) },
+  henry: { name: "Henry", password: bcrypt.hashSync("henryspassword", 10) },
+  irene: { name: "Irene", password: bcrypt.hashSync("irenespassword", 10) },
+  jason: { name: "Jason", password: bcrypt.hashSync("jasonspassword", 10) },
   admin: {
     name: "Admin",
     password: bcrypt.hashSync("adminpassword", 10),
