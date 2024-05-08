@@ -1,20 +1,26 @@
 // auth.mjs
 import jwt from "jsonwebtoken";
+const secretKey = "your-secret-key";
 
-export const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1]; // Bearer Token
-  if (!token) {
-    return res
-      .status(403)
-      .json({ success: false, message: "No token provided" });
+export const generateToken = (username) => {
+  const payload = {
+    username: username,
+  };
+  const options = {
+    expiresIn: "1h",
+  };
+  const token = jwt.sign(payload, secretKey, options);
+  return token;
+};
+
+export const verifyToken = (token) => {
+  try {
+    // Verify the JWT using the secret key
+    const decoded = jwt.verify(token, secretKey);
+    return decoded.username;
+  } catch (err) {
+    // If the token is invalid or expired, an error will be thrown
+    console.error("JWT verification failed:", err.message);
+    return null;
   }
-  jwt.verify(token, "your_secret_key", (err, decoded) => {
-    if (err) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Failed to authenticate token" });
-    }
-    req.user = decoded;
-    next();
-  });
 };

@@ -1,40 +1,25 @@
 import bcrypt from "bcrypt";
-
-const users = {
-  alice: { name: "Alice", password: bcrypt.hashSync("alicespassword", 10) },
-  bob: { name: "Bob", password: bcrypt.hashSync("bobspassword", 10) },
-  charlie: {
-    name: "Charlie",
-    password: bcrypt.hashSync("charliespassword", 10),
-  },
-  diana: { name: "Diana", password: bcrypt.hashSync("dianaspassword", 10) },
-  emily: { name: "Emily", password: bcrypt.hashSync("emilyspassword", 10) },
-  frank: { name: "Frank", password: bcrypt.hashSync("frankspassword", 10) },
-  grace: { name: "Grace", password: bcrypt.hashSync("gracespassword", 10) },
-  henry: { name: "Henry", password: bcrypt.hashSync("henryspassword", 10) },
-  irene: { name: "Irene", password: bcrypt.hashSync("irenespassword", 10) },
-  jason: { name: "Jason", password: bcrypt.hashSync("jasonspassword", 10) },
-  admin: {
-    name: "Admin",
-    password: bcrypt.hashSync("adminpassword", 10),
-    isAdmin: true,
-  },
-};
+import { generateToken, verifyToken } from "../auth/auth.mjs";
+import "../db/Sequelize.mjs";
+import { getUser } from "../db/Sequelize.mjs";
 
 // Function to authenticate a user including admin check
 export const authenticate = async (req, res) => {
   const username = req.body.username.toLowerCase();
   const { password } = req.body;
 
-  if (!users[username]) {
+  const user = await getUser(username);
+
+  if (!user) {
     console.log("Login attempt failed for user: ", username);
     return res.status(404).json({ success: false, message: "User not found" });
   }
-
-  const user = users[username];
+  console.log(user);
   const passwordMatch = await bcrypt.compare(password, user.password);
 
   if (passwordMatch) {
+    const token = generateToken(username);
+    res.cookie("auth", token);
     res.json({
       success: true,
       message: "Login successful!",
@@ -49,15 +34,20 @@ export const authenticate = async (req, res) => {
 export const get = (req, res) => {
   const username = req.params.username.toLowerCase();
 
-  if (users[username] && users[username].isAdmin) {
+  const token = req.cookies["auth"];
+  const tokenUsername = verifyToken(token);
+
+  if (tokenUsername !== username) {
+    return res.status(401).send("Unauthorized User");
+  }
+  const user = getUser(username);
+
+  if (user && user.admin) {
     // If the user is admin, list all user names except the admin
-    const userNames = Object.entries(users)
-      .filter(([key, _]) => key !== "admin")
-      .map(([_, user]) => user.name)
-      .join(", ");
-    res.send(`All users: ${userNames}`);
-  } else if (users[username]) {
-    res.send(`User: ${users[username].name}`);
+
+    res.send(`All users: TODO`);
+  } else if (user) {
+    res.send(`User: ${username}}`);
   } else {
     res.status(404).send("User not found");
   }

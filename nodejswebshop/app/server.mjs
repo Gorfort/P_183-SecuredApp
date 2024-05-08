@@ -4,6 +4,7 @@ import https from "https";
 import http from "http";
 import fs from "fs";
 import path from "path";
+import cookieParser from "cookie-parser";
 import { fileURLToPath } from "url";
 
 // Define __dirname in ES Module
@@ -43,6 +44,8 @@ const options = {
 
 // Create an Express app
 const app = express();
+
+app.use(cookieParser());
 
 // Middleware to parse JSON bodies
 app.use(express.json());
