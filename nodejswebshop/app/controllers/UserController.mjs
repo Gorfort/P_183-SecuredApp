@@ -47,7 +47,7 @@ export const get = (req, res) => {
 
     res.send(`All users: TODO`);
   } else if (user) {
-    res.send(`User: ${username}}`);
+    res.send(`User: ${username}`);
   } else {
     res.status(404).send("User not found");
   }
