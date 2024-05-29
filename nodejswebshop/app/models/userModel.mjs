@@ -1,6 +1,6 @@
 const UserModel = (sequelize, DataTypes) => {
   return sequelize.define(
-    "User",
+    "t_user",
     {
       id: {
         type: DataTypes.INTEGER,
